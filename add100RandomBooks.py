@@ -21,29 +21,38 @@ def getAuthToken():
     else:
         raise Exception(f"Status code {r.status_code} and text {r.text}, while trying to Auth.")
 
-def addBook(book, apiKey):
-    r = requests.post(
-        f"{APIHOST}/api/v1/books", 
+def delBook(id, apiKey):
+    r = requests.delete(
+        f"{APIHOST}/api/v1/books/{id}", 
         headers = {
             "Content-type": "application/json",
             "X-API-Key": apiKey
-            },
-        data = json.dumps(book)
+            }
     )
     if r.status_code == 200:
-        print(f"Book {book} added.")
+        print(f"Book with ID {id} deleted.")
     else:
-        raise Exception(f"Error code {r.status_code} and text {r.text}, while trying to add book {book}.")
+        raise Exception(f"Error code {r.status_code} and text {r.text}, while trying to delete book with ID{book}.")
 
 # Get the Auth Token Key
 apiKey = getAuthToken()
 
+def getBookCount():
+    r = requests.get(
+        f"{APIHOST}/api/v1/books"
+    )
+    if r.status_code == 200:
+        return 40   # placeholder value for efficiency sake
+
+
 # Using the faker module, generate random "fake" books
-fake = Faker()
-for i in range(4, 105):
-    fakeTitle = fake.catch_phrase()
-    fakeAuthor = fake.name()
-    fakeISBN = fake.isbn13()
-    book = {"id":i, "title": fakeTitle, "author": fakeAuthor, "isbn": fakeISBN}
-    # add the new random "fake" book using the API
-    addBook(book, apiKey) 
+# fake = Faker()
+bookcount = getBookCount()
+decrBookcount = bookcount-5
+
+for i in range(0, 5):
+    delBook(i, apiKey)
+
+for i in range(decrBookcount, bookcount):
+    print(getBookCount)
+    delBook(i, apiKey)
